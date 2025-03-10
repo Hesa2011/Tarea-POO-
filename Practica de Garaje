@@ -1,0 +1,112 @@
+// See https://aka.ms/new-console-template for more information
+//Console.WriteLine("Hello, World!");
+
+using System;
+
+class Motor
+{
+    private int litros_de_aceite;
+    private int potencia;
+
+    public Motor(int potencia)
+    {
+        this.potencia = potencia;
+        this.litros_de_aceite = 0;
+    }
+
+    public int GetLitrosDeAceite() => litros_de_aceite;
+    public int GetPotencia() => potencia;
+    public void SetLitrosDeAceite(int litros) => litros_de_aceite = litros;
+    public void SetPotencia(int potencia) => this.potencia = potencia;
+}
+
+class Coche
+{
+    private Motor motor;
+    private string marca;
+    private string modelo;
+    private double precioAverias;
+
+    public Coche(string marca, string modelo, int potencia)
+    {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.motor = new Motor(potencia);
+        this.precioAverias = 0;
+    }
+
+    public string GetMarca() => marca;
+    public string GetModelo() => modelo;
+    public double GetPrecioAverias() => precioAverias;
+    public Motor GetMotor() => motor;
+
+    public void AcumularAveria(double importe)
+    {
+        precioAverias += importe;
+    }
+}
+
+class Garaje
+{
+    private Coche coche;
+    private string averia;
+    private int numCochesAtendidos;
+    private bool ocupado;
+
+    public Garaje()
+    {
+        coche = null;
+        averia = "";
+        numCochesAtendidos = 0;
+        ocupado = false;
+    }
+
+    public bool AceptarCoche(Coche coche, string averia)
+    {
+        if (ocupado) return false;
+        this.coche = coche;
+        this.averia = averia;
+        ocupado = true;
+        numCochesAtendidos++;
+        double costo = new Random().Next(50, 500);
+        coche.AcumularAveria(costo);
+        if (averia == "aceite")
+        {
+            coche.GetMotor().SetLitrosDeAceite(coche.GetMotor().GetLitrosDeAceite() + 10);
+        }
+        return true;
+    }
+
+    public void DevolverCoche()
+    {
+        coche = null;
+        averia = "";
+        ocupado = false;
+    }
+}
+
+class PracticaPOO
+{
+    static void Main()
+    {
+        Garaje garaje = new Garaje();
+        Coche coche1 = new Coche("Toyota", "Corolla", 120);
+        Coche coche2 = new Coche("Ford", "Focus", 150);
+
+        for (int i = 0; i < 2; i++)
+        {
+            if (garaje.AceptarCoche(coche1, "aceite"))
+            {
+                garaje.DevolverCoche();
+            }
+            if (garaje.AceptarCoche(coche2, "motor"))
+            {
+                garaje.DevolverCoche();
+            }
+        }
+
+        Console.WriteLine($"{coche1.GetMarca()} {coche1.GetModelo()} - Gastos: {coche1.GetPrecioAverias()} - Aceite: {coche1.GetMotor().GetLitrosDeAceite()}L");
+        Console.WriteLine($"{coche2.GetMarca()} {coche2.GetModelo()} - Gastos: {coche2.GetPrecioAverias()} - Aceite: {coche2.GetMotor().GetLitrosDeAceite()}L");
+    }
+}
+
